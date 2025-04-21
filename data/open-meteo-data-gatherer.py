@@ -15,9 +15,9 @@ url = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 params = {
 	"latitude": 52,
 	"longitude": 21,
-	"start_date": "2021-01-01",
+	"start_date": "2021-06-01",
 	"end_date": "2025-01-01",
-	"hourly": ["temperature_2m", "shortwave_radiation", "direct_normal_irradiance", "diffuse_radiation", "wind_speed_10m", "cloud_cover", "sunshine_duration", "precipitation_probability", "precipitation", "relative_humidity_2m"],
+	"hourly": ["temperature_2m", "shortwave_radiation", "direct_normal_irradiance", "diffuse_radiation", "wind_speed_10m", "cloud_cover", "sunshine_duration", "precipitation", "relative_humidity_2m"]
 }
 responses = openmeteo.weather_api(url, params=params)
 
@@ -37,9 +37,8 @@ hourly_diffuse_radiation = hourly.Variables(3).ValuesAsNumpy()
 hourly_wind_speed_10m = hourly.Variables(4).ValuesAsNumpy()
 hourly_cloud_cover = hourly.Variables(5).ValuesAsNumpy()
 hourly_sunshine_duration = hourly.Variables(6).ValuesAsNumpy()
-hourly_precipitation_probability = hourly.Variables(7).ValuesAsNumpy()
-hourly_precipitation = hourly.Variables(8).ValuesAsNumpy()
-hourly_relative_humidity_2m = hourly.Variables(9).ValuesAsNumpy()
+hourly_precipitation = hourly.Variables(7).ValuesAsNumpy()
+hourly_relative_humidity_2m = hourly.Variables(8).ValuesAsNumpy()
 
 hourly_data = {"date": pd.date_range(
 	start = pd.to_datetime(hourly.Time(), unit = "s"),
@@ -55,10 +54,10 @@ hourly_data["diffuse_radiation"] = hourly_diffuse_radiation
 hourly_data["wind_speed_10m"] = hourly_wind_speed_10m
 hourly_data["cloud_cover"] = hourly_cloud_cover
 hourly_data["sunshine_duration"] = hourly_sunshine_duration
-hourly_data["precipitation_probability"] = hourly_precipitation_probability
 hourly_data["precipitation"] = hourly_precipitation
 hourly_data["relative_humidity_2m"] = hourly_relative_humidity_2m
 
 hourly_dataframe = pd.DataFrame(data = hourly_data)
 print(hourly_dataframe)
+
 hourly_dataframe.to_csv('hourly_data.csv', index=False)

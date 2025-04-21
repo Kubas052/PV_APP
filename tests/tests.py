@@ -1,12 +1,20 @@
 import pandas as pd
 import holidays
 import pytest
+from pathlib import Path
+
 
 @pytest.fixture
 def merged_data_fixture():
-    hourly_data = pd.read_csv('../data/hourly_data.csv')
-    hourly_electricity_price = pd.read_csv('../data/hourly_electricity_price.csv')
-    hourly_production_by_type = pd.read_csv('../data/hourly_production_by_type.csv')
+    # ścieżka do folderu z testem
+    base_path = Path(__file__).resolve().parent.parent / 'data'
+
+    # załaduj dane
+    hourly_data = pd.read_csv(base_path / 'hourly_data.csv')
+    hourly_electricity_price = pd.read_csv(base_path / 'hourly_electricity_price.csv')
+    hourly_production_by_type = pd.read_csv(base_path / 'hourly_production_by_type.csv')
+
+    # dalsza część kodu...
     pl_holidays = holidays.Poland(years=[2021, 2022, 2023, 2024, 2025])
 
     hourly_data['date'] = pd.to_datetime(hourly_data['date'])
@@ -22,10 +30,9 @@ def merged_data_fixture():
     merged['is_holiday'] = merged['date'].dt.date.isin(pl_holidays.keys()).astype(int)
 
     merged = merged[(merged['date'] >= '2021-06-01') & (merged['date'] < '2025-01-01')]
-    merged = merged.drop(columns=['date_utc', 'other', 'other_renewable'], errors='ignore')  # just in case
+    merged = merged.drop(columns=['date_utc', 'other', 'other_renewable'], errors='ignore')
 
     return merged
-
 
 def test_date_range(merged_data_fixture):
     assert merged_data_fixture['date'].min() >= pd.Timestamp('2021-06-01')
@@ -50,3 +57,9 @@ def test_is_holiday_values(merged_data_fixture):
 def test_dropped_columns(merged_data_fixture):
     dropped = {'date_utc', 'other', 'other_renewable'}
     assert dropped.isdisjoint(set(merged_data_fixture.columns))
+
+def test_is_christmas_holiday(merged_data_fixture):
+    # Check if Christmas (25th December) is marked as a holiday
+    christmas_date = pd.Timestamp('2022-12-25')
+    assert merged_data_fixture.loc[merged_data_fixture['date'] == christmas_date, 'is_holiday'].values[0] == 1
+

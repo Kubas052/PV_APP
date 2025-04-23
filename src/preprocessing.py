@@ -1,5 +1,6 @@
 import pandas as pd
 import holidays
+from pv_utils import estimate_pv_output
 
 def load_and_process_data():
     # data initialization
@@ -30,6 +31,7 @@ def load_and_process_data():
     #print(merged_data.info())
 
     merged_data = merged_data.dropna()
+    merged_data['pv_output_estimate'] = merged_data.apply(estimate_pv_output, axis=1)
     print(merged_data.columns)
     return merged_data
 load_and_process_data()

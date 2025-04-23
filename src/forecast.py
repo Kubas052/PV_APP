@@ -4,6 +4,7 @@ import requests_cache
 import pandas as pd
 from retry_requests import retry
 import holidays
+from preprocessing import estimate_pv_output
 
 def get_forecast(days):
 	pl_holidays = holidays.Poland(years=[2021, 2022, 2023, 2024, 2025])
@@ -72,6 +73,7 @@ def get_forecast(days):
 	forecast_dataframe['weekend'] = forecast_dataframe['date'].dt.weekday.isin([5, 6]).astype(int)
 	forecast_dataframe['weekday_test'] = forecast_dataframe['date'].dt.day_name()
 	forecast_dataframe['is_holiday'] = forecast_dataframe['date'].dt.date.isin(pl_holidays.keys()).astype(int)
+	forecast_dataframe['pv_output_estimate'] = forecast_dataframe.apply(estimate_pv_output, axis=1)
 	return forecast_dataframe
 
 forecast_data = get_forecast(days=14)

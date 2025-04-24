@@ -1,14 +1,15 @@
+
 import joblib
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from preprocessing import *
+from src.utils.preprocessing import *
 #loads data from preprocessing
 merged_data = load_and_process_data()
 #selects features and target
-features = ['month', 'hour', 'temperature_2m', 'wind_speed_10m','cloud_cover']
-target = 'pv_output_estimate'
+features = ['year', 'month', 'hour', 'temperature_2m', 'wind_speed_10m', 'day', 'weekday']
+target = 'fixing_ii_price'
 
 X = merged_data[features]
 y = merged_data[target]
@@ -26,6 +27,7 @@ print(f"MAE: {mae}")
 print(f"MSE: {mse}")
 print(f"R²: {r2}")
 #importances (how valuable is a feature)
+
 importances = model.feature_importances_
 feature_importance = pd.Series(importances, index=features)
 feature_importance = feature_importance.sort_values(ascending=False)
@@ -33,7 +35,4 @@ feature_importance = feature_importance.sort_values(ascending=False)
 print("Feature Importances:")
 print(feature_importance)
 
-
-
-joblib.dump(model, '../models/pv_output_model.pkl')
-
+joblib.dump(model, '../models/fixing_ii_price_model.pkl')

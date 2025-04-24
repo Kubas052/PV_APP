@@ -1,12 +1,14 @@
 import pandas as pd
 import holidays
-from pv_utils import estimate_pv_output
+import os
+from src.utils.pv_utils import estimate_pv_output
 
 def load_and_process_data():
     # data initialization
-    hourly_data = pd.read_csv('../data/hourly_data.csv')
-    hourly_electricity_price = pd.read_csv('../data/hourly_electricity_price.csv')
-    hourly_production_by_type = pd.read_csv('../data/hourly_production_by_type.csv')
+    data_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    hourly_data = pd.read_csv(os.path.join(data_dir, 'hourly_data.csv'))
+    hourly_electricity_price = pd.read_csv(os.path.join(data_dir, 'hourly_electricity_price.csv'))
+    hourly_production_by_type = pd.read_csv(os.path.join(data_dir, 'hourly_production_by_type.csv'))
     pl_holidays = holidays.Poland(years=[2021, 2022, 2023, 2024, 2025])
 
     # Date handling
@@ -18,7 +20,6 @@ def load_and_process_data():
     hourly_electricity_price['date'] = pd.to_datetime(hourly_electricity_price['date'], format='%d.%m.%Y %H:%M')
     hourly_production_by_type['date'] = pd.to_datetime(hourly_production_by_type['date'], format='%d.%m.%Y %H:%M')
     merged_data = pd.merge(hourly_data, hourly_electricity_price, on='date')
-    print(merged_data.info())
     merged_data = pd.merge(merged_data, hourly_production_by_type, on='date')
     merged_data['weekday'] = merged_data['date'].dt.weekday #just in case it would improve learning time
     merged_data['weekend'] = merged_data['date'].dt.weekday.isin([5, 6]).astype(int)
@@ -32,7 +33,6 @@ def load_and_process_data():
 
     merged_data = merged_data.dropna()
     merged_data['pv_output_estimate'] = merged_data.apply(estimate_pv_output, axis=1)
-    print(merged_data.columns)
     return merged_data
 load_and_process_data()
 #output

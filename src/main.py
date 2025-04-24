@@ -1,5 +1,7 @@
-#TODO join modelpv and modelfixing to make the decisionmaking script
-#TODO loading models from ./models instead of training every time
-from prediction import predict_forecast
+from menu.menu import main_menu
 
-predict_forecast(7)
+if __name__ == "__main__":
+    main_menu()
+#TODO better chart visibility
+#TODO ask user every time if he wants to change panel settings (or cache it somewhere)
+#TODO fix hours in every chart :v

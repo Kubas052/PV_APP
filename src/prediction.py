@@ -5,19 +5,19 @@ from weather_forecast import get_forecast
 def predict_forecast(days=7):
     forecast_data = get_forecast(days=7)
     try:
-
         pv_model = joblib.load('../models/pv_output_model.pkl')
         fixing_model = joblib.load('../models/fixing_ii_price_model.pkl')
         print("✅ Modele zostały załadowane z pliku.")
-    except Exception as e:
-        print("⚠️ Nie udało się załadować modeli. Trenuję od nowa...")
-        os.system('../training/model_pv_output.py')
-        os.system('../training/model_pv_output.py')
+    except FileNotFoundError as e:
+        print(f"⚠️ Nie udało się załadować modeli: {e}. Trenuję od nowa...")
+        os.system('python ../training/model_pv_output.py')
+        os.system('python ../training/model_fixing.py')
         pv_model = joblib.load('../models/pv_output_model.pkl')
         fixing_model = joblib.load('../models/fixing_ii_price_model.pkl')
         print("✅ Modele zostały przetrenowane i załadowane.")
-
-    forecast_data = get_forecast(days=7)
+    except Exception as e:
+        print(f"❌ Wystąpił nieoczekiwany błąd: {e}")
+        return
 
     forecast_data['day'] = forecast_data['date'].dt.day  # wymagane przez model fixing
     forecast_data['weekday'] = forecast_data['date'].dt.weekday

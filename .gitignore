@@ -5,3 +5,7 @@ __pycache__/
 *.sqlite3
 *.log
 *.cache
+*.fixing_ii_price_model.pkl
+*.pv_output_model.pkl
+models/fixing_ii_price_model.pkl
+models/pv_output_model.pkl
